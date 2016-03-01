@@ -271,6 +271,12 @@ func (cli *CLI) parseFlags(args []string) (*Config, []string, bool, bool, error)
 		return nil
 	}), "syslog-facility", "")
 
+	flags.Var((funcDurationVar)(func(d time.Duration) error {
+		config.Timeout = d
+		config.set("timeout")
+		return nil
+	}), "timeout", "")
+
 	flags.Var((funcVar)(func(s string) error {
 		w, err := watch.ParseWait(s)
 		if err != nil {
@@ -400,6 +406,8 @@ Options:
                            attribute is supplied, the -syslog flag must also be
                            supplied.
 
+  -timeout=<duration>      The amount of time to wait for the child process to
+                           to restart before killing and and restarting the process.
   -wait=<duration>         Sets the 'minumum(:maximum)' amount of time to wait
                            before writing a triggering a restart
   -retry=<duration>        The amount of time to wait if Consul returns an
